@@ -1,6 +1,11 @@
+import { DrizzleAdapter } from '@auth/drizzle-adapter'
+import { ExpressAuth } from '@auth/express'
+import GitHub  from '@auth/express/providers/github'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import express from 'express'
+
+import { db } from '~db/config'
 
 const PORT = process.env.PORT || 3000
 const URL = process.env.SERVER_URL || 'http://localhost:3000'
@@ -14,15 +19,19 @@ app.use(express.static('public'))
 app.use(bodyParser.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser(COOKIE_SECRET))
+app.enable('trust proxy')
 // CORS ignore
-app.use( (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000')
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
-  res.header('Access-Control-Allow-Credentials', 'true')
-  res.header('Set-Cookie', 'true')
-  next()
-})
+// app.use( (req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', 'http://localhost:3000')
+//   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+//   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+//   res.header('Access-Control-Allow-Credentials', 'true')
+//   res.header('Set-Cookie', 'true')
+//   next()
+// })
+
+/** Auth.js handler */
+app.use('/api/auth/*', ExpressAuth({ adapter: DrizzleAdapter(db), providers: [GitHub] }))
 
 app.get('/', async (_req, res) => {
   res.render('pages/index', {

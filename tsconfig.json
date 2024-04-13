@@ -27,6 +27,23 @@
 		"types": [
 			"node"
 		],
+		"paths": {
+			"~db/*": [
+				"./src/database/*"
+			],
+			"~models/*": [
+				"./src/models/*"
+			],
+			"~routes/*": [
+				"./src/routes/*"
+			],
+			"~services/*": [
+				"./src/services/*"
+			],
+			"~/*": [
+				"./src/*"
+			],
+		}
 	},
 	"include": [
 		"src/**/*",

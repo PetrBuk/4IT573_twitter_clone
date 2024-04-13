@@ -39,5 +39,8 @@ yarn-error.log*
 *.db
 *.db-journal
 
+# drizzle
+/drizzle
+
 # ide
 /.idea/

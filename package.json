@@ -4,12 +4,7 @@
   "description": "Project for Node.js basics Course at Prague University of Economics and Business",
   "type": "module",
   "scripts": {
-    "tsc": "tsc",
-    "watch-tsc": "tsc -w",
-    "deploy": "node dist/server.js",
-    "watch-deploy": "nodemon dist/server.js",
-    "dev": "concurrently \"npm run watch-tsc\" \"npm run watch-deploy\"",
-    "start": "npm run deploy",
+    "dev": "tsx watch --env-file=.env server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:push": "drizzle-kit push:pg",
     "db:studio": "drizzle-kit studio",
@@ -18,11 +13,14 @@
   "author": "Petr Buk",
   "license": "ISC",
   "dependencies": {
+    "@auth/drizzle-adapter": "^0.9.0",
+    "@auth/express": "^0.5.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "cookie": "^0.6.0",
     "cookie-parser": "^1.4.6",
     "drizzle-orm": "^0.30.8",
+    "drizzle-zod": "^0.5.1",
     "ejs": "^3.1.9",
     "express": "^4.19.2",
     "express-validator": "^7.0.1",
@@ -45,9 +43,8 @@
     "@types/qs": "^6.9.14",
     "@typescript-eslint/eslint-plugin": "^7.6.0",
     "@typescript-eslint/parser": "^7.6.0",
-    "concurrently": "^8.2.2",
     "drizzle-kit": "^0.20.14",
     "eslint": "^8.57.0",
-    "nodemon": "^3.1.0"
+    "tsx": "^4.7.2"
   }
 }
