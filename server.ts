@@ -1,11 +1,9 @@
-import { DrizzleAdapter } from '@auth/drizzle-adapter'
 import { ExpressAuth } from '@auth/express'
-import GitHub  from '@auth/express/providers/github'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import express from 'express'
-
-import { db } from '~db/config'
+import { authenticatedUser } from '~/middlewares/auth'
+import { authConfig } from '~/utils/auth'
 
 const PORT = process.env.PORT || 3000
 const URL = process.env.SERVER_URL || 'http://localhost:3000'
@@ -30,12 +28,18 @@ app.enable('trust proxy')
 //   next()
 // })
 
+/** Auth session middleware */
+app.use(authenticatedUser)
+
 /** Auth.js handler */
-app.use('/api/auth/*', ExpressAuth({ adapter: DrizzleAdapter(db), providers: [GitHub] }))
+app.use('/api/auth/*', ExpressAuth(authConfig))
 
 app.get('/', async (_req, res) => {
+  const session = res.locals.session
+
   res.render('pages/index', {
     title: 'Twitter Clone',
+    user: session.user,
   })
 })
 
