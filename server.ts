@@ -1,10 +1,9 @@
-import { ExpressAuth } from '@auth/express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import express from 'express'
 import { authenticatedUser } from '~/middlewares/auth'
-import { authConfig } from '~/utils/auth'
 import { isDBConnected } from '~db/config'
+import { appRouter } from '~routes/router'
 
 const PORT = process.env.PORT || 3000
 const URL = process.env.SERVER_URL || 'http://localhost:3000'
@@ -33,16 +32,7 @@ app.enable('trust proxy')
 app.use(authenticatedUser)
 
 /** Auth.js handler */
-app.use('/api/auth/*', ExpressAuth(authConfig))
-
-app.get('/', async (_req, res) => {
-  const session = res.locals.session
-
-  res.render('pages/index', {
-    title: 'Twitter Clone',
-    user: session.user,
-  })
-})
+app.use(appRouter)
 
 export const server = app.listen(PORT, () => {
   console.log(`Server running on ${URL}`)
