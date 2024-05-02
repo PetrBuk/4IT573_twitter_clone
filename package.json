@@ -4,6 +4,7 @@
   "description": "Project for Node.js basics Course at Prague University of Economics and Business",
   "type": "module",
   "scripts": {
+    "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx,css,html,md}\"",
     "dev": "tsx watch --env-file=.env server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:push": "drizzle-kit push:pg",
@@ -32,6 +33,7 @@
     "ws": "^8.16.0"
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/body-parser": "^1.19.5",
     "@types/config": "^3.3.4",
@@ -45,7 +47,10 @@
     "@typescript-eslint/parser": "^7.6.0",
     "drizzle-kit": "^0.20.17",
     "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
     "pg": "^8.11.5",
+    "prettier": "^3.2.5",
     "tsx": "^4.7.2"
   }
 }

@@ -31,10 +31,10 @@
 			"~db/*": [
 				"./src/database/*"
 			],
-			"~models/*": [
-				"./src/models/*"
-			],
 			"~routes/*": [
+				"./src/routes/*"
+			],
+			"~controllers/*": [
 				"./src/routes/*"
 			],
 			"~services/*": [
