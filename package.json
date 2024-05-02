@@ -43,8 +43,9 @@
     "@types/qs": "^6.9.14",
     "@typescript-eslint/eslint-plugin": "^7.6.0",
     "@typescript-eslint/parser": "^7.6.0",
-    "drizzle-kit": "^0.20.14",
+    "drizzle-kit": "^0.20.17",
     "eslint": "^8.57.0",
+    "pg": "^8.11.5",
     "tsx": "^4.7.2"
   }
 }
