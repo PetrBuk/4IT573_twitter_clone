@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser'
 import express from 'express'
 import { authenticatedUser } from '~/middlewares/auth'
 import { authConfig } from '~/utils/auth'
+import { isDBConnected } from '~db/config'
 
 const PORT = process.env.PORT || 3000
 const URL = process.env.SERVER_URL || 'http://localhost:3000'
@@ -45,4 +46,10 @@ app.get('/', async (_req, res) => {
 
 export const server = app.listen(PORT, () => {
   console.log(`Server running on ${URL}`)
+
+  isDBConnected().then((connected) => {
+    if (!connected) {
+      console.error('⚠⚠⚠ DATABASE NOT CONNECTED! ⚠⚠⚠')
+    }
+  })
 })
