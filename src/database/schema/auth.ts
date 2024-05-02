@@ -1,5 +1,11 @@
 import { AdapterAccount } from '@auth/express/adapters'
-import { integer, pgTable, primaryKey, text, timestamp } from 'drizzle-orm/pg-core'
+import {
+  integer,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp
+} from 'drizzle-orm/pg-core'
 
 export const users = pgTable('user', {
   id: text('id').notNull().primaryKey(),
@@ -8,7 +14,7 @@ export const users = pgTable('user', {
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
   image: text('image'),
   bio: text('bio'),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
+  createdAt: timestamp('created_at').notNull().defaultNow()
 })
 
 export const accounts = pgTable(
@@ -26,12 +32,12 @@ export const accounts = pgTable(
     token_type: text('token_type'),
     scope: text('scope'),
     id_token: text('id_token'),
-    session_state: text('session_state'),
+    session_state: text('session_state')
   },
   (account) => ({
     compoundKey: primaryKey({
-      columns: [account.provider, account.providerAccountId],
-    }),
+      columns: [account.provider, account.providerAccountId]
+    })
   })
 )
 
@@ -40,7 +46,7 @@ export const sessions = pgTable('session', {
   userId: text('userId')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  expires: timestamp('expires', { mode: 'date' }).notNull(),
+  expires: timestamp('expires', { mode: 'date' }).notNull()
 })
 
 export const verificationTokens = pgTable(
@@ -48,9 +54,9 @@ export const verificationTokens = pgTable(
   {
     identifier: text('identifier').notNull(),
     token: text('token').notNull(),
-    expires: timestamp('expires', { mode: 'date' }).notNull(),
+    expires: timestamp('expires', { mode: 'date' }).notNull()
   },
   (vt) => ({
-    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
+    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] })
   })
 )

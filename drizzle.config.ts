@@ -5,6 +5,6 @@ export default {
   driver: 'pg',
   out: 'drizzle',
   dbCredentials: {
-    connectionString: process.env.DATABASE_URL as string,
-  },
+    connectionString: process.env.DATABASE_URL as string
+  }
 } satisfies Config

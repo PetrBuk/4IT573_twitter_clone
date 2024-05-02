@@ -1,9 +1,12 @@
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import express from 'express'
-import { authenticatedUser } from '~/middlewares/auth'
+
 import { isDBConnected } from '~db/config'
+
 import { appRouter } from '~routes/router'
+
+import { authenticatedUser } from '~/middlewares/auth'
 
 const PORT = process.env.PORT || 3000
 const URL = process.env.SERVER_URL || 'http://localhost:3000'

@@ -1,8 +1,10 @@
 import { ExpressAuth } from '@auth/express'
 import { Router } from 'express'
+
 import { authConfig } from '~/utils/auth'
-import { webRouter } from './web/pages'
+
 import { tweetRouter } from './api/tweet.route'
+import { webRouter } from './web/pages'
 
 export const appRouter = Router()
 

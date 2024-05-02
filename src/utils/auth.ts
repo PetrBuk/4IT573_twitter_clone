@@ -1,5 +1,5 @@
-import GitHub  from '@auth/express/providers/github'
 import { DrizzleAdapter } from '@auth/drizzle-adapter'
+import GitHub from '@auth/express/providers/github'
 
 import { db } from '~db/config'
 

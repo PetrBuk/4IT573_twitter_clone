@@ -10,9 +10,9 @@ import {
   uniqueIndex,
   uuid
 } from 'drizzle-orm/pg-core'
+import { createInsertSchema } from 'drizzle-zod'
 
 import { users } from './auth'
-import { createInsertSchema } from 'drizzle-zod'
 
 export const usersRelations = relations(users, ({ many }) => ({
   tweets: many(tweets),

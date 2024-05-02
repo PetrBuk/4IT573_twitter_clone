@@ -1,7 +1,10 @@
 import { Request, Response } from 'express'
-import { safeRequestHandler } from '~/utils'
+
 import { TweetInsert, tweetInsertSchema } from '~db/schema'
+
 import { TweetService } from '~services/tweet.service'
+
+import { safeRequestHandler } from '~/utils'
 
 export class TweetController {
   static addTweet = safeRequestHandler<

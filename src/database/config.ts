@@ -14,4 +14,6 @@ export const isDBConnected = async () => {
   }
 }
 
-export const db = drizzle(postgres(process.env.DATABASE_URL as string), { schema })
+export const db = drizzle(postgres(process.env.DATABASE_URL as string), {
+  schema
+})

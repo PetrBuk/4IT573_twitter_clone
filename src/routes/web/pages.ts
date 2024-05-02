@@ -7,6 +7,6 @@ webRouter.get('/', async (_req, res) => {
 
   res.render('pages/index', {
     title: 'Twitter Clone',
-    user: session.user,
+    user: session.user
   })
 })
