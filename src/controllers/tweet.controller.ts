@@ -1,30 +1,38 @@
 import { Request, Response } from 'express'
 
-import { TweetInsert, tweetInsertSchema } from '~db/schema'
+import { tweetInsertSchema } from '~db/schema'
 
 import { TweetService } from '~services/tweet.service'
 
-import { safeRequestHandler } from '~/utils'
+import { htmlResponseType, safeRequestHandler } from '~/utils'
 
 export class TweetController {
-  static addTweet = safeRequestHandler<
-    Record<string, never>,
-    TweetInsert,
-    Record<string, never>
-  >({ body: tweetInsertSchema }, async (req, res, next) => {
-    try {
-      const user = res.locals.session.user
+  static addTweet = safeRequestHandler(
+    { body: tweetInsertSchema.omit({ userId: true }) },
+    async (req, res, next) => {
+      try {
+        const user = res.locals.session.user
 
-      const tweedData = tweetInsertSchema.parse(req.body)
-      const tweet = await TweetService.addTweet({
-        ...tweedData,
-        userId: user.id
-      })
-      res.json(tweet?.[0])
-    } catch (err) {
-      next(err)
+        if (!user) return res.status(401).json({ error: 'Unauthorized' })
+
+        const tweet = await TweetService.addTweet({
+          text: req.body.text,
+          userId: user.id
+        })
+
+        if (htmlResponseType(req)) {
+          res.header('HX-Refresh', 'true')
+
+          return res.send()
+        }
+
+        res.json(tweet)
+      } catch (err) {
+        console.log(err)
+        next(err)
+      }
     }
-  })
+  )
 
   static async getTweets(req: Request, res: Response) {
     try {

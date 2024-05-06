@@ -5,10 +5,12 @@ import { TweetInsert, tweets } from '~db/schema'
 
 export class TweetService {
   static async addTweet(tweetData: TweetInsert) {
-    return await db
-      .insert(tweets)
-      .values({ ...tweetData })
-      .returning()
+    return (
+      await db
+        .insert(tweets)
+        .values({ ...tweetData })
+        .returning()
+    )?.[0]
   }
 
   static async getTweets() {

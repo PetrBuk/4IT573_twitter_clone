@@ -1,4 +1,4 @@
-import { RequestHandler } from 'express'
+import { Request, RequestHandler } from 'express'
 import { ZodSchema } from 'zod'
 
 // ToDo: General RequestHandler type with auth context
@@ -28,7 +28,15 @@ export const safeRequestHandler = <TParams, TBody, TQuery>(
       handler(req, res, next)
     } catch (error: any) {
       // ToDo: Format this error properly
+      console.error('Validation error:', error.errors)
       res.status(400).json({ error: error.errors })
     }
   }
+}
+
+/** Check if we need to return the html type */
+export const htmlResponseType = (
+  req: Request<unknown, unknown, unknown, unknown>
+) => {
+  return !req.headers.accept?.includes('application/json')
 }
