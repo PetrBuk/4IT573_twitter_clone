@@ -1,8 +1,6 @@
 import { InferInsertModel, InferSelectModel, relations } from 'drizzle-orm'
 import {
   AnyPgColumn,
-  alias,
-  boolean,
   pgTable,
   primaryKey,
   text,
@@ -17,8 +15,8 @@ import { users } from './auth'
 export const usersRelations = relations(users, ({ many }) => ({
   tweets: many(tweets),
   likes: many(likes),
-  bookmarks: many(bookmarks),
-  replies: many(replies)
+  retweets: many(retweets),
+  bookmarks: many(bookmarks)
 }))
 
 export const tweets = pgTable('tweets', {
@@ -29,15 +27,12 @@ export const tweets = pgTable('tweets', {
     .references(() => users.id),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
-  isReply: boolean('is_reply').notNull().default(false),
   replyId: uuid('reply_id').references((): AnyPgColumn => tweets.id)
 })
 
 export type Tweet = InferSelectModel<typeof tweets>
 export type TweetInsert = InferInsertModel<typeof tweets>
 export const tweetInsertSchema = createInsertSchema(tweets)
-
-export const tweetsReplies = alias(tweets, 'tweets_replies')
 
 export const tweetsRelations = relations(tweets, ({ one }) => ({
   user: one(users, {
@@ -73,23 +68,6 @@ export const tweetHashtag = pgTable(
   })
 )
 
-export const replies = pgTable('replies', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  text: text('text').notNull(),
-  userId: text('user_id')
-    .notNull()
-    .references(() => users.id),
-  tweetId: uuid('tweet_id').references(() => tweets.id),
-  replyId: uuid('reply_id').references((): AnyPgColumn => replies.id) // self reference
-})
-
-export const repliesRelations = relations(replies, ({ one }) => ({
-  user: one(users, {
-    fields: [replies.userId],
-    references: [users.id]
-  })
-}))
-
 export const likes = pgTable(
   'likes',
   {
@@ -113,6 +91,33 @@ export const likes = pgTable(
 export const likesRelations = relations(likes, ({ one }) => ({
   user: one(users, {
     fields: [likes.userId],
+    references: [users.id]
+  })
+}))
+
+export const retweets = pgTable(
+  'retweets',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id),
+    tweetId: uuid('tweet_id')
+      .notNull()
+      .references(() => tweets.id),
+    created_at: timestamp('created_at').defaultNow().notNull()
+  },
+  (retweets) => ({
+    uniqueRetweetIndex: uniqueIndex('retweets__user_id_tweet_id__idx').on(
+      retweets.userId,
+      retweets.tweetId
+    )
+  })
+)
+
+export const retweetsRelations = relations(retweets, ({ one }) => ({
+  user: one(users, {
+    fields: [retweets.userId],
     references: [users.id]
   })
 }))

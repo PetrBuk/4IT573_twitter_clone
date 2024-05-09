@@ -1,7 +1,8 @@
-import { desc, eq } from 'drizzle-orm'
+import { count, desc, eq } from 'drizzle-orm'
+import { alias } from 'drizzle-orm/pg-core'
 
 import { db } from '~db/config'
-import { TweetInsert, tweets } from '~db/schema'
+import { TweetInsert, likes, retweets, tweets, users } from '~db/schema'
 
 export class TweetService {
   static async addTweet(tweetData: TweetInsert) {
@@ -14,11 +15,57 @@ export class TweetService {
   }
 
   static async getTweets() {
-    return await db.select().from(tweets).orderBy(desc(tweets.createdAt))
+    const replies = alias(tweets, 'reply')
+
+    return await db
+      .select({
+        id: tweets.id,
+        text: tweets.text,
+        createdAt: tweets.createdAt,
+        updatedAt: tweets.updatedAt,
+        repliesCount: count(replies.id),
+        likesCount: count(likes.id),
+        retweetsCount: count(retweets.id),
+        user: {
+          name: users.name,
+          image: users.image
+        }
+      })
+      .from(tweets)
+      .leftJoin(replies, eq(tweets.id, replies.replyId))
+      .leftJoin(likes, eq(tweets.id, likes.tweetId))
+      .leftJoin(retweets, eq(tweets.id, retweets.tweetId))
+      .groupBy(tweets.id, users.name, users.image)
+      .leftJoin(users, eq(tweets.userId, users.id))
+      .orderBy(desc(tweets.createdAt))
   }
 
   static async getTweet(id: string) {
-    return await db.select().from(tweets).where(eq(tweets.id, id))
+    const replies = alias(tweets, 'reply')
+
+    return (
+      await db
+        .select({
+          id: tweets.id,
+          text: tweets.text,
+          createdAt: tweets.createdAt,
+          updatedAt: tweets.updatedAt,
+          repliesCount: count(replies.id),
+          likesCount: count(likes.id),
+          retweetsCount: count(retweets.id),
+          user: {
+            name: users.name,
+            image: users.image
+          }
+        })
+        .from(tweets)
+        .where(eq(tweets.id, id))
+        .leftJoin(replies, eq(tweets.id, replies.replyId))
+        .leftJoin(likes, eq(tweets.id, likes.tweetId))
+        .leftJoin(retweets, eq(tweets.id, retweets.tweetId))
+        .groupBy(tweets.id, users.name, users.image)
+        .leftJoin(users, eq(tweets.userId, users.id))
+    )?.[0]
   }
 
   static async updateTweet(
@@ -34,5 +81,13 @@ export class TweetService {
 
   static async deleteTweet(id: string) {
     return await db.delete(tweets).where(eq(tweets.id, id)).returning()
+  }
+
+  static async getReplies(tweetId: string) {
+    return await db
+      .select()
+      .from(tweets)
+      .where(eq(tweets.replyId, tweetId))
+      .orderBy(desc(tweets.createdAt))
   }
 }

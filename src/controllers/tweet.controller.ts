@@ -21,6 +21,7 @@ export class TweetController {
         })
 
         if (htmlResponseType(req)) {
+          // ToDo: Send the created tweet html here maybe?
           res.header('HX-Refresh', 'true')
 
           return res.send()
@@ -37,6 +38,11 @@ export class TweetController {
   static async getTweets(req: Request, res: Response) {
     try {
       const tweets = await TweetService.getTweets()
+
+      if (htmlResponseType(req)) {
+        return res.render('partials/main_wall/feed', { tweets })
+      }
+
       res.json(tweets)
     } catch (error) {
       console.error(error)
