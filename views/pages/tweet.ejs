@@ -31,12 +31,15 @@
 
 						<%- include('../partials/main_wall/tweet', { tweet: tweet }) %>
 
-							<hr class="border-gray-600 border-2">
+							<%- include('../partials/main_wall/reply', { tweet: tweet }) %>
 
-							<div>
-							</div>
+								<hr class="border-gray-600 border-1">
 
-							<%- include('../partials/main_wall/feed', { tweets: replies }) %>
+								<div>
+
+									<%- include('../partials/main_wall/feed', { tweets: replies }) %>
+
+								</div>
 
 								<hr class="border-gray-600">
 

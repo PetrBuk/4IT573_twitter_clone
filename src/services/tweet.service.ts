@@ -84,10 +84,29 @@ export class TweetService {
   }
 
   static async getReplies(tweetId: string) {
+    const replies = alias(tweets, 'reply')
+
     return await db
-      .select()
+      .select({
+        id: tweets.id,
+        text: tweets.text,
+        createdAt: tweets.createdAt,
+        updatedAt: tweets.updatedAt,
+        repliesCount: count(replies.id),
+        likesCount: count(likes.id),
+        retweetsCount: count(retweets.id),
+        user: {
+          name: users.name,
+          image: users.image
+        }
+      })
       .from(tweets)
       .where(eq(tweets.replyId, tweetId))
+      .leftJoin(replies, eq(tweets.id, replies.replyId))
+      .leftJoin(likes, eq(tweets.id, likes.tweetId))
+      .leftJoin(retweets, eq(tweets.id, retweets.tweetId))
+      .groupBy(tweets.id, users.name, users.image)
+      .leftJoin(users, eq(tweets.userId, users.id))
       .orderBy(desc(tweets.createdAt))
   }
 }

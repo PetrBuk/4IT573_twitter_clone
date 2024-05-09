@@ -82,4 +82,31 @@ export class TweetController {
       res.status(500).json({ error: 'Something went wrong' })
     }
   }
+
+  static async reply(req: Request, res: Response) {
+    try {
+      console.log('REPLY')
+      const user = res.locals.session.user
+
+      if (!user) return res.status(401).json({ error: 'Unauthorized' })
+
+      const reply = await TweetService.addTweet({
+        text: req.body.text,
+        userId: user.id,
+        replyId: req.params.id
+      })
+
+      if (htmlResponseType(req)) {
+        // ToDo: Send the created tweet html here maybe?
+        res.header('HX-Refresh', 'true')
+
+        return res.send()
+      }
+
+      res.json(reply)
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({ error: 'Something went wrong' })
+    }
+  }
 }
