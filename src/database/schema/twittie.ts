@@ -88,6 +88,8 @@ export const likes = pgTable(
   })
 )
 
+export type LikeInsert = InferInsertModel<typeof likes>
+
 export const likesRelations = relations(likes, ({ one }) => ({
   user: one(users, {
     fields: [likes.userId],

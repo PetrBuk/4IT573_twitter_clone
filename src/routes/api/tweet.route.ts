@@ -1,5 +1,6 @@
 import { Router } from 'express'
 
+import { LikeController } from '~/controllers/like.controller'
 import { TweetController } from '~/controllers/tweet.controller'
 
 export const tweetRouter = Router()
@@ -10,3 +11,4 @@ tweetRouter.get('/:id', TweetController.getTweet)
 tweetRouter.put('/:id', TweetController.updateTweet)
 tweetRouter.delete('/:id', TweetController.deleteTweet)
 tweetRouter.post('/reply/:id', TweetController.reply)
+tweetRouter.post('/like/:id', LikeController.likeTweet)

@@ -5,6 +5,7 @@ import { tweetInsertSchema } from '~db/schema'
 import { TweetService } from '~services/tweet.service'
 
 import { htmlResponseType, safeRequestHandler } from '~/utils'
+import { getLikeContext } from '~/utils/format'
 
 export class TweetController {
   static addTweet = safeRequestHandler(
@@ -38,9 +39,16 @@ export class TweetController {
   static async getTweets(req: Request, res: Response) {
     try {
       const tweets = await TweetService.getTweets()
+      const likes = await TweetService.getLikedTweets(
+        res.locals.session.user?.id
+      )
+
+      const tweetsWithLikes = getLikeContext(tweets, likes)
 
       if (htmlResponseType(req)) {
-        return res.render('partials/main_wall/feed', { tweets })
+        return res.render('partials/main_wall/feed', {
+          tweets: tweetsWithLikes
+        })
       }
 
       res.json(tweets)
@@ -85,7 +93,6 @@ export class TweetController {
 
   static async reply(req: Request, res: Response) {
     try {
-      console.log('REPLY')
       const user = res.locals.session.user
 
       if (!user) return res.status(401).json({ error: 'Unauthorized' })

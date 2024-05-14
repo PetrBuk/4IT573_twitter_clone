@@ -2,6 +2,8 @@ import { Router } from 'express'
 
 import { TweetService } from '~services/tweet.service'
 
+import { getLikeContext } from '~/utils/format'
+
 export const webRouter = Router()
 
 webRouter.get('/:id', async (req, res) => {
@@ -27,9 +29,13 @@ webRouter.get('/', async (_req, res) => {
 
   const tweets = await TweetService.getTweets()
 
+  const likedTweets = await TweetService.getLikedTweets(session.user?.id)
+
+  const tweetsWithLikes = getLikeContext(tweets, likedTweets)
+
   res.render('pages/index', {
     title: 'Twitter Clone',
     user: session.user,
-    tweets
+    tweets: tweetsWithLikes
   })
 })

@@ -68,6 +68,15 @@ export class TweetService {
     )?.[0]
   }
 
+  static async getLikedTweets(userId: string) {
+    return await db
+      .select({
+        tweetId: likes.tweetId
+      })
+      .from(likes)
+      .where(eq(likes.userId, userId))
+  }
+
   static async updateTweet(
     id: string,
     tweetData: Omit<TweetInsert, 'userId' | 'id' | 'createdAt'>
