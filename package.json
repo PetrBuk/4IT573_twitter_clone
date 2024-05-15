@@ -7,9 +7,9 @@
     "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx,css,html,md}\"",
     "dev": "tsx watch --env-file=.env server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db:push": "drizzle-kit push:pg",
+    "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:generate": "drizzle-kit generate:pg"
+    "db:generate": "drizzle-kit generate"
   },
   "author": "Petr Buk",
   "license": "ISC",
@@ -45,7 +45,7 @@
     "@types/qs": "^6.9.14",
     "@typescript-eslint/eslint-plugin": "^7.6.0",
     "@typescript-eslint/parser": "^7.6.0",
-    "drizzle-kit": "^0.20.17",
+    "drizzle-kit": "^0.21.2",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
