@@ -12,7 +12,7 @@ export class LikeController {
 
       if (!user) return res.status(401).json({ error: 'Unauthorized' })
 
-      let tweet = await TweetService.getTweet(req.params.id as string)
+      let tweet = await TweetService.getTweet(user.id, req.params.id as string)
 
       if (!tweet) return res.status(404).json({ error: 'Tweet not found' })
 
@@ -27,7 +27,7 @@ export class LikeController {
         await LikeService.likeTweet(user.id, req.params.id as string)
       }
 
-      tweet = await TweetService.getTweet(req.params.id as string)
+      tweet = await TweetService.getTweet(user.id, req.params.id as string)
 
       if (htmlResponseType(req)) {
         return res.render('partials/main_wall/like_button', {

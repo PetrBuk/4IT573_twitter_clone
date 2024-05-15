@@ -1,15 +1,26 @@
 import { Router } from 'express'
 
+import { BookmarkService } from '~services/bookmark.service'
 import { TweetService } from '~services/tweet.service'
 
-import { getLikeContext } from '~/utils/format'
-
 export const webRouter = Router()
+
+webRouter.get('/bookmarks', async (_req, res) => {
+  const session = res.locals.session
+
+  const bookmarks = await BookmarkService.getBookmarks(session.user.id)
+
+  res.render('pages/bookmarks', {
+    title: 'Bookmarks',
+    user: session.user,
+    tweets: bookmarks
+  })
+})
 
 webRouter.get('/:id', async (req, res) => {
   const session = res.locals.session
 
-  const tweet = await TweetService.getTweet(req.params.id)
+  const tweet = await TweetService.getTweet(session.user.id, req.params.id)
 
   const replies = await TweetService.getReplies(req.params.id)
 
@@ -17,7 +28,7 @@ webRouter.get('/:id', async (req, res) => {
   if (!tweet) return res.redirect('/')
 
   res.render('pages/tweet', {
-    title: 'Twitter Clone - Tweet details',
+    title: 'Tweet details',
     user: session.user,
     tweet,
     replies
@@ -27,15 +38,11 @@ webRouter.get('/:id', async (req, res) => {
 webRouter.get('/', async (_req, res) => {
   const session = res.locals.session
 
-  const tweets = await TweetService.getTweets()
-
-  const likedTweets = await TweetService.getLikedTweets(session.user?.id)
-
-  const tweetsWithLikes = getLikeContext(tweets, likedTweets)
+  const tweets = await TweetService.getTweets(session.user.id)
 
   res.render('pages/index', {
-    title: 'Twitter Clone',
+    title: 'Home',
     user: session.user,
-    tweets: tweetsWithLikes
+    tweets: tweets
   })
 })

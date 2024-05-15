@@ -1,8 +1,20 @@
-import { count, desc, eq } from 'drizzle-orm'
+import { and, count, desc, eq, exists } from 'drizzle-orm'
 import { alias } from 'drizzle-orm/pg-core'
 
 import { db } from '~db/config'
-import { TweetInsert, likes, retweets, tweets, users } from '~db/schema'
+import {
+  Tweet,
+  TweetInsert,
+  bookmarks,
+  likes,
+  retweets,
+  tweets,
+  users
+} from '~db/schema'
+
+import { BookmarkService } from './bookmark.service'
+import { LikeService } from './like.service'
+import { RetweetService } from './retweet.service'
 
 export class TweetService {
   static async addTweet(tweetData: TweetInsert) {
@@ -14,7 +26,7 @@ export class TweetService {
     )?.[0]
   }
 
-  static async getTweets() {
+  static async getTweets(userId: string) {
     const replies = alias(tweets, 'reply')
 
     return await db
@@ -26,6 +38,31 @@ export class TweetService {
         repliesCount: count(replies.id),
         likesCount: count(likes.id),
         retweetsCount: count(retweets.id),
+        isLiked: exists(
+          db
+            .select()
+            .from(likes)
+            .where(and(eq(likes.tweetId, tweets.id), eq(likes.userId, userId)))
+        ),
+        isRetweeted: exists(
+          db
+            .select()
+            .from(retweets)
+            .where(
+              and(eq(retweets.tweetId, tweets.id), eq(retweets.userId, userId))
+            )
+        ),
+        isBookmarked: exists(
+          db
+            .select()
+            .from(bookmarks)
+            .where(
+              and(
+                eq(bookmarks.tweetId, tweets.id),
+                eq(bookmarks.userId, userId)
+              )
+            )
+        ),
         user: {
           name: users.name,
           image: users.image
@@ -40,7 +77,7 @@ export class TweetService {
       .orderBy(desc(tweets.createdAt))
   }
 
-  static async getTweet(id: string) {
+  static async getTweet(userId: string, id: string) {
     const replies = alias(tweets, 'reply')
 
     return (
@@ -53,6 +90,36 @@ export class TweetService {
           repliesCount: count(replies.id),
           likesCount: count(likes.id),
           retweetsCount: count(retweets.id),
+          isLiked: exists(
+            db
+              .select()
+              .from(likes)
+              .where(
+                and(eq(likes.tweetId, tweets.id), eq(likes.userId, userId))
+              )
+          ),
+          isRetweeted: exists(
+            db
+              .select()
+              .from(retweets)
+              .where(
+                and(
+                  eq(retweets.tweetId, tweets.id),
+                  eq(retweets.userId, userId)
+                )
+              )
+          ),
+          isBookmarked: exists(
+            db
+              .select()
+              .from(bookmarks)
+              .where(
+                and(
+                  eq(bookmarks.tweetId, tweets.id),
+                  eq(bookmarks.userId, userId)
+                )
+              )
+          ),
           user: {
             name: users.name,
             image: users.image
@@ -117,5 +184,30 @@ export class TweetService {
       .groupBy(tweets.id, users.name, users.image)
       .leftJoin(users, eq(tweets.userId, users.id))
       .orderBy(desc(tweets.createdAt))
+  }
+
+  static async getTweetWithUserContext(tweet: Partial<Tweet>, userId: string) {
+    const isLiked = LikeService.checkIfLiked(userId, tweet.id as string)
+    const isRetweeted = RetweetService.checkIfRetweeted(
+      userId,
+      tweet.id as string
+    )
+    const isBookmarked = BookmarkService.checkIfBookmarked(
+      userId,
+      tweet.id as string
+    )
+
+    const [liked, retweeted, bookmarked] = await Promise.all([
+      isLiked,
+      isRetweeted,
+      isBookmarked
+    ])
+
+    return {
+      ...tweet,
+      isLiked: liked,
+      isRetweeted: retweeted,
+      isBookmarked: bookmarked
+    }
   }
 }

@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { RetweetService } from '~services/retweet.service'
+import { BookmarkService } from '~services/bookmark.service'
 import { TweetService } from '~services/tweet.service'
 
 import { htmlResponseType } from '~/utils'
 
-export class RetweetController {
-  static async retweetTweet(req: Request, res: Response, next: NextFunction) {
+export class BookmarkController {
+  static async bookmarkTweet(req: Request, res: Response, next: NextFunction) {
     try {
       const user = res.locals.session.user
 
@@ -16,22 +16,22 @@ export class RetweetController {
 
       if (!tweet) return res.status(404).json({ error: 'Tweet not found' })
 
-      const retweeted = await RetweetService.checkIfRetweeted(
+      const bookmarked = await BookmarkService.checkIfBookmarked(
         user.id,
         req.params.id as string
       )
 
-      if (retweeted) {
-        await RetweetService.unretweetTweet(user.id, req.params.id as string)
+      if (bookmarked) {
+        await BookmarkService.unbookmarkTweet(user.id, req.params.id as string)
       } else {
-        await RetweetService.retweetTweet(user.id, req.params.id as string)
+        await BookmarkService.bookmarkTweet(user.id, req.params.id as string)
       }
 
       tweet = await TweetService.getTweet(user.id, req.params.id as string)
 
       if (htmlResponseType(req)) {
-        return res.render('partials/main_wall/retweet_button', {
-          tweet: { ...tweet, isRetweeted: !retweeted }
+        return res.render('partials/main_wall/bookmark_button', {
+          tweet: { ...tweet, isBookmarked: !bookmarked }
         })
       }
 

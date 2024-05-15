@@ -5,7 +5,6 @@ import { tweetInsertSchema } from '~db/schema'
 import { TweetService } from '~services/tweet.service'
 
 import { htmlResponseType, safeRequestHandler } from '~/utils'
-import { getLikeContext } from '~/utils/format'
 
 export class TweetController {
   static addTweet = safeRequestHandler(
@@ -38,16 +37,11 @@ export class TweetController {
 
   static async getTweets(req: Request, res: Response) {
     try {
-      const tweets = await TweetService.getTweets()
-      const likes = await TweetService.getLikedTweets(
-        res.locals.session.user?.id
-      )
-
-      const tweetsWithLikes = getLikeContext(tweets, likes)
+      const tweets = await TweetService.getTweets(res.locals.session.user.id)
 
       if (htmlResponseType(req)) {
         return res.render('partials/main_wall/feed', {
-          tweets: tweetsWithLikes
+          tweets
         })
       }
 
@@ -60,7 +54,10 @@ export class TweetController {
 
   static async getTweet(req: Request, res: Response) {
     try {
-      const tweet = await TweetService.getTweet(req.params.id || '')
+      const tweet = await TweetService.getTweet(
+        res.locals.session.user.id,
+        req.params.id || ''
+      )
       res.json(tweet)
     } catch (error) {
       console.error(error)

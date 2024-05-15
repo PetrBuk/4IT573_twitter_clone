@@ -1,5 +1,6 @@
 import { Router } from 'express'
 
+import { BookmarkController } from '~/controllers/bookmark.controller'
 import { LikeController } from '~/controllers/like.controller'
 import { RetweetController } from '~/controllers/retweet.controller'
 import { TweetController } from '~/controllers/tweet.controller'
@@ -14,3 +15,4 @@ tweetRouter.delete('/:id', TweetController.deleteTweet)
 tweetRouter.post('/reply/:id', TweetController.reply)
 tweetRouter.post('/like/:id', LikeController.likeTweet)
 tweetRouter.post('/retweet/:id', RetweetController.retweetTweet)
+tweetRouter.post('/bookmark/:id', BookmarkController.bookmarkTweet)

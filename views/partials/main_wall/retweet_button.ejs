@@ -1,12 +1,13 @@
 <button type="button" hx-post="/api/tweet/retweet/<%= tweet.id %>" hx-swap="outerHTML"
 	class="w-auto mt-1 group flex gap-1 items-center text-gray-500 px-3 py-2 text-base leading-6 font-medium rounded-full hover:bg-gray-600 hover:text-blue-300">
 
-	<svg class="text-center h-7 w-6" fill="<%= tweet.isRetweeted ? 'red' : 'none' %>" stroke-linecap="round"
-		stroke-linejoin="round" stroke-width="2" stroke="currentColor" viewBox="0 0 24 24">
+	<svg class="text-center h-7 w-6" fill="<%= tweet.isRetweeted ? '#93c5fd' : 'none' %>" stroke-linecap="round"
+		stroke-linejoin="round" stroke-width="2" stroke="<%= tweet.isRetweeted ? '#93c5fd' : 'currentColor' %>"
+		viewBox="0 0 24 24">
 		<path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
 	</svg>
 
-	<span class="min-w-4">
+	<span class="min-w-4 <%= tweet.isRetweeted ? 'text-blue-300' : '' %>">
 		<%= tweet.retweetsCount %>
 	</span>
 
