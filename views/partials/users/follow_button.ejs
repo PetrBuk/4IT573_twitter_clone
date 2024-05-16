@@ -1,0 +1,4 @@
+<button hx-post="/api/follow/<%= user.id %>" hx-swap="outerHTML"
+	class="min-w-28 <%= user.isFollowed ? 'bg-blue-600' : 'bg-transparent' %> hover:bg-blue-500 text-white font-semibold hover:text-white py-2 px-4 border <%= user.isFollowed ? 'border-transparent' : 'border-white' %> hover:border-transparent rounded-full">
+	<%= user.isFollowed ? 'Followed' : 'Follow' %>
+</button>

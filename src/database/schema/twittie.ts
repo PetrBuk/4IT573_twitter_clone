@@ -24,7 +24,7 @@ export const tweets = pgTable('tweets', {
   text: text('text').notNull(),
   userId: text('user_id')
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
   replyId: uuid('reply_id').references((): AnyPgColumn => tweets.id)
@@ -61,10 +61,9 @@ export const tweetHashtag = pgTable(
       .references(() => hashtags.id)
   },
   (tweet_hashtag) => ({
-    tweetHashtagPrimaryKey: primaryKey(
-      tweet_hashtag.tweetId,
-      tweet_hashtag.hashtagId
-    )
+    tweetHashtagPrimaryKey: primaryKey({
+      columns: [tweet_hashtag.tweetId, tweet_hashtag.hashtagId]
+    })
   })
 )
 
@@ -147,6 +146,34 @@ export const bookmarks = pgTable(
 export const bookmarksRelations = relations(bookmarks, ({ one }) => ({
   user: one(users, {
     fields: [bookmarks.userId],
+    references: [users.id]
+  })
+}))
+
+export const follows = pgTable(
+  'follows',
+  {
+    follower: text('follower_id')
+      .references(() => users.id)
+      .notNull(),
+    followed: text('followed_id')
+      .references(() => users.id)
+      .notNull(),
+
+    createdAt: timestamp('created_at').defaultNow().notNull()
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.follower, table.followed] })
+  })
+)
+
+export const followsRelations = relations(follows, ({ one }) => ({
+  follower: one(users, {
+    fields: [follows.follower],
+    references: [users.id]
+  }),
+  followed: one(users, {
+    fields: [follows.followed],
     references: [users.id]
   })
 }))

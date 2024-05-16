@@ -1,6 +1,6 @@
 <div class="w-full">
 	<div class="flex flex-shrink-0 p-4 pb-0">
-		<a href="/<%= tweet.id %>" class="flex-shrink-0 group block">
+		<a href="/tweet/<%= tweet.id %>" class="flex-shrink-0 group block">
 			<div class="flex items-center">
 				<div>
 					<img class="inline-block h-10 w-10 rounded-full" src="<%= tweet.user.image %>" alt="" />
@@ -28,7 +28,7 @@
 
 				<div class="flex items-center">
 					<div class="flex-1 text-center">
-						<a href="/<%= tweet.id %>"
+						<a href="/tweet/<%= tweet.id %>"
 							class="w-auto mt-1 group flex gap-1 items-center text-gray-500 px-3 py-2 text-base leading-6 font-medium rounded-full hover:bg-gray-600 hover:text-blue-300">
 
 							<svg class="text-center h-6 w-6" fill="none" stroke-linecap="round" stroke-linejoin="round"

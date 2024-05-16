@@ -159,7 +159,7 @@ export class TweetService {
     return await db.delete(tweets).where(eq(tweets.id, id)).returning()
   }
 
-  static async getReplies(tweetId: string) {
+  static async getReplies(userId: string, tweetId: string) {
     const replies = alias(tweets, 'reply')
 
     return await db
@@ -171,6 +171,31 @@ export class TweetService {
         repliesCount: count(replies.id),
         likesCount: count(likes.id),
         retweetsCount: count(retweets.id),
+        isLiked: exists(
+          db
+            .select()
+            .from(likes)
+            .where(and(eq(likes.tweetId, tweets.id), eq(likes.userId, userId)))
+        ),
+        isRetweeted: exists(
+          db
+            .select()
+            .from(retweets)
+            .where(
+              and(eq(retweets.tweetId, tweets.id), eq(retweets.userId, userId))
+            )
+        ),
+        isBookmarked: exists(
+          db
+            .select()
+            .from(bookmarks)
+            .where(
+              and(
+                eq(bookmarks.tweetId, tweets.id),
+                eq(bookmarks.userId, userId)
+              )
+            )
+        ),
         user: {
           name: users.name,
           image: users.image
