@@ -5,6 +5,7 @@ import { tweetInsertSchema } from '~db/schema'
 import { TweetService } from '~services/tweet.service'
 
 import { htmlResponseType, safeRequestHandler } from '~/utils'
+import { idParamSchema } from '~/utils/validation'
 
 export class TweetController {
   static addTweet = safeRequestHandler(
@@ -52,41 +53,47 @@ export class TweetController {
     }
   }
 
-  static async getTweet(req: Request, res: Response) {
-    try {
-      const tweet = await TweetService.getTweet(
-        res.locals.session.user.id,
-        req.params.id || ''
-      )
-      res.json(tweet)
-    } catch (error) {
-      console.error(error)
-      res.status(500).json({ error: 'Something went wrong' })
+  static getTweet = safeRequestHandler(
+    { params: idParamSchema },
+    async (req, res) => {
+      try {
+        const tweet = await TweetService.getTweet(
+          res.locals.session.user.id,
+          req.params.id
+        )
+        res.json(tweet)
+      } catch (error) {
+        console.error(error)
+        res.status(500).json({ error: 'Something went wrong' })
+      }
     }
-  }
+  )
 
-  static async updateTweet(req: Request, res: Response) {
-    try {
-      const tweet = await TweetService.updateTweet(
-        req.params.id || '',
-        req.body
-      )
-      res.json(tweet)
-    } catch (error) {
-      console.error(error)
-      res.status(500).json({ error: 'Something went wrong' })
+  static updateTweet = safeRequestHandler(
+    { params: idParamSchema, body: tweetInsertSchema },
+    async (req, res) => {
+      try {
+        const tweet = await TweetService.updateTweet(req.params.id, req.body)
+        res.json(tweet)
+      } catch (error) {
+        console.error(error)
+        res.status(500).json({ error: 'Something went wrong' })
+      }
     }
-  }
+  )
 
-  static async deleteTweet(req: Request, res: Response) {
-    try {
-      const tweet = await TweetService.deleteTweet(req.params.id || '')
-      res.json(tweet)
-    } catch (error) {
-      console.error(error)
-      res.status(500).json({ error: 'Something went wrong' })
+  static deleteTweet = safeRequestHandler(
+    { params: idParamSchema },
+    async (req, res) => {
+      try {
+        const tweet = await TweetService.deleteTweet(req.params.id)
+        res.json(tweet)
+      } catch (error) {
+        console.error(error)
+        res.status(500).json({ error: 'Something went wrong' })
+      }
     }
-  }
+  )
 
   static async reply(req: Request, res: Response) {
     try {
