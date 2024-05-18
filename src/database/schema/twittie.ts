@@ -73,10 +73,10 @@ export const likes = pgTable(
     id: uuid('id').primaryKey().defaultRandom(),
     userId: text('user_id')
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: 'cascade' }),
     tweetId: uuid('tweet_id')
       .notNull()
-      .references(() => tweets.id),
+      .references(() => tweets.id, { onDelete: 'cascade' }),
     created_at: timestamp('created_at').defaultNow().notNull()
   },
   (likes) => ({
@@ -102,10 +102,10 @@ export const retweets = pgTable(
     id: uuid('id').primaryKey().defaultRandom(),
     userId: text('user_id')
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: 'cascade' }),
     tweetId: uuid('tweet_id')
       .notNull()
-      .references(() => tweets.id),
+      .references(() => tweets.id, { onDelete: 'cascade' }),
     created_at: timestamp('created_at').defaultNow().notNull()
   },
   (retweets) => ({
@@ -128,10 +128,10 @@ export const bookmarks = pgTable(
   {
     id: uuid('id').primaryKey().defaultRandom(),
     userId: text('user_id')
-      .references(() => users.id)
+      .references(() => users.id, { onDelete: 'cascade' })
       .notNull(),
     tweetId: uuid('tweet_id')
-      .references(() => tweets.id)
+      .references(() => tweets.id, { onDelete: 'cascade' })
       .notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull()
   },
@@ -154,10 +154,10 @@ export const follows = pgTable(
   'follows',
   {
     follower: text('follower_id')
-      .references(() => users.id)
+      .references(() => users.id, { onDelete: 'cascade' })
       .notNull(),
     followed: text('followed_id')
-      .references(() => users.id)
+      .references(() => users.id, { onDelete: 'cascade' })
       .notNull(),
 
     createdAt: timestamp('created_at').defaultNow().notNull()
